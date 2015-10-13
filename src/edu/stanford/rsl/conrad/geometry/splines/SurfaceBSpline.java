@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.math.plot.utils.Array;
+
 import edu.stanford.rsl.conrad.geometry.AbstractCurve;
 import edu.stanford.rsl.conrad.geometry.AbstractShape;
 import edu.stanford.rsl.conrad.geometry.AbstractSurface;
@@ -103,7 +105,7 @@ public class SurfaceBSpline extends AbstractSurface  {
 		while(uKnots.getElement(degreeU) == 0) degreeU++;
 		degreeU --;
 		int degreeV = 0;
-		while(uKnots.getElement(degreeV) == 0) degreeV++;
+		while(vKnots.getElement(degreeV) == 0) degreeV++;
 		degreeV --;
 		numberOfUPoints = uKnots.getLen() - ((degreeU+1));
 		numberOfVPoints = vKnots.getLen() - ((degreeV+1));
@@ -1057,6 +1059,64 @@ public class SurfaceBSpline extends AbstractSurface  {
 	public AbstractShape clone() {
 		return new SurfaceBSpline(this);
 	}
+	
+	 public ArrayList<Triangle> tessellateMeshCompoundShapeTest(double samplingU, double samplingV){
+	        PointND [] pts = getRasterPoints(samplingU, samplingV);
+	        ArrayList<Triangle> superShape = new ArrayList<Triangle>();
+	        ArrayList<Triangle> mesh = superShape;
+	        ArrayList<PointND> lastSlice = new ArrayList<PointND>();
+	        for(double i =1 ; i < samplingU; i++){
+	            double lasti = i - 1;
+	            if (lasti < 0) lasti = samplingU - 1;
+	            for (double j = 0; j < samplingV; j++){
+	                double lastj = j - 1;
+	                if (lastj < 0) lastj = samplingV - 1;
+	                if (i == samplingU-1) lastSlice.add(pts[(int)(i*samplingV+j)]);
+	                try{
+	                    Triangle t1 = new Triangle(pts[(int)(lasti*samplingV+lastj)] ,
+	                            pts[(int)(i*samplingV+lastj)] ,
+	                            pts[(int)(lasti*samplingV+j)]);
+	                    mesh.add(t1);
+	                } catch (Exception e){
+	                    if (!e.getLocalizedMessage().contains("direction vector")){
+	                        System.out.println(e.getLocalizedMessage() +" "+ i + " " + j + " " + lasti + " " + lastj);
+	                    }
+	                }
+	                try{
+
+	                    Triangle t2 = new Triangle(pts[(int)(i*samplingV+lastj)] ,
+	                            pts[(int)(lasti*samplingV+j)] ,
+	                            pts[(int)(i*samplingV+j)]);
+	                    mesh.add(t2);
+	                } catch (Exception e){
+	                    if (!e.getLocalizedMessage().contains("direction vector")){
+	                        System.out.println(e.getLocalizedMessage() +" "+ i + " " + j + " " + lasti + " " + lastj);
+	                    }
+	                }
+	            }
+	        }
+	        if (lastSlice.size() > 0) {
+	            PointND center = General.getGeometricCenter(lastSlice);
+	            for (int i = 1; i < lastSlice.size(); i++){
+	                try{
+	                    mesh.add(new Triangle(center, lastSlice.get(i), lastSlice.get(i-1)));
+	                } catch (Exception e){
+	                    if (!e.getLocalizedMessage().contains("direction vector")){
+	                        System.out.println(e.getLocalizedMessage());
+	                    }
+	                }
+	            }
+	            try{
+	                mesh.add(new Triangle(center, lastSlice.get(0), lastSlice.get(lastSlice.size()-1)));
+	            } catch (Exception e){
+	                if (!e.getLocalizedMessage().contains("direction vector")){
+	                    System.out.println(e.getLocalizedMessage());
+	                }
+	            }
+	        }
+	        System.out.println("Triangles: " + superShape + " " + superShape.size());
+	        return superShape;
+	    }
 
 
 }
