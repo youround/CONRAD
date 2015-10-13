@@ -60,6 +60,7 @@
 	<classpathentry kind="lib" path="plugins/Input-Output/ome_tools.jar"/>
 	<classpathentry kind="lib" path="plugins/Input-Output/QuickTime_Plugins.jar"/>
 	<classpathentry kind="lib" path="plugins/VolumeJ/bij.jar"/>
+	<classpathentry kind="lib" path="D:/Fiji.app/plugins/Gray_Morphology-2.3.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/weka.jar"/>
 	<classpathentry kind="lib" path="lib/weka-src.jar"/>

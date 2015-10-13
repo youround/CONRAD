@@ -179,6 +179,57 @@ public class BSpline extends AbstractCurve {
 		return d;
 	}
 	
+	protected double[] BasisFuns(double internalCoordinate, int index) 
+	{
+		double[] N = new double[degree + 1];
+		double[] left = new double[degree + 1];
+		double[] right = new double[degree + 1];
+		N[0] = 1.0d;
+		for (int j = 1; j <= degree; j++)
+		{
+			left[j] = internalCoordinate - knots[index + 1 - j];
+			right[j] = knots[index + j] - internalCoordinate;
+			double saved = 0.0d;
+			for (int r = 0; r < j; r++)
+			{
+				double temp = N[r] / (right[r+1] + left[j - r]);
+				N[r] = saved + right[r + 1] * temp;
+				saved  = left[j - r]  * temp;
+			}
+			N[j] = saved;
+		}
+		return N;
+	}
+	
+	
+/*	public double [] evalFast(double t) {
+		if(!IS_CLAMPED){
+			t = lowerBound + t*delta;
+		}
+		double [] p = new double [getControlPoints().get(0).getDimension()];
+		int n = controlPoints.size();
+		int index = Arrays.binarySearch(knots, t);
+		if (index < 0) index = -1 * index - 2; 
+		if (index < degree) index = degree;
+		if (index >= n) index = n-1;
+		double[] Ai = BasisFuns(t, index);
+		int start = index - degree;
+		for (int i = 0; i < degree + 1; i++) 
+		{
+			double w = Ai[i];
+			//double w = N(t, i, degree);
+			int k = start + i;
+			double[] loc = getControlPoints().get(start+i).getCoordinates();
+			for (int j = 0; j < loc.length; j++){
+				p[j] += (loc[j] * w); //pt[i][j] * w);
+			}
+		}
+		
+		//System.out.println(p [0] + " " + p[1]);
+		return p;
+	}*/
+	
+	
 	public double [] evalFast(double t) {
 		if(!IS_CLAMPED){
 			t = lowerBound + t*delta;

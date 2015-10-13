@@ -167,7 +167,7 @@ public class ParallelBackprojector2D {
 			double cosTheta = Math.cos(theta);
 			double sinTheta = Math.sin(theta);
 			// get detector direction vector
-			SimpleVector dirDetector = new SimpleVector(sinTheta,cosTheta);
+			SimpleVector dirDetector = new SimpleVector(cosTheta,sinTheta);
 			// loops over the image grid
 			for (int x = 0; x < grid.getSize()[0]; x++) {
 				for (int y = 0; y < grid.getSize()[1]; y++) {

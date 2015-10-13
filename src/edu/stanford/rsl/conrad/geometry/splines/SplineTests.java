@@ -172,7 +172,9 @@ public class SplineTests {
 		UniformCubicBSpline cspline = new UniformCubicBSpline(spline.getControlPoints(), spline.getKnots());
 		
 		VisualizationUtil.createSplinePlot(spline).show();
-		VisualizationUtil.createSplinePlot(cspline).show();
+		
+		SurfaceBSpline Surspline = createTestSurfaceSpline();
+		System.out.println(Surspline.evaluate(1,1));
 		
 		FileReader file;
 		try {
